@@ -146,41 +146,104 @@ if st.button("Predict"):
     )
 
 
-import streamlit as st
+# --- Step 2: AI Summary Section ---
+st.subheader("Step 1: Lifestyle Summary")
 
-st.markdown("## 🧠 AI-Powered Personalized Health Plan")
+# Display key derived metrics
+st.write(f"**BMI:** {input_data['bmi']:.2f} ({input_data['bmi_category']})")
+st.write(f"**Lifestyle Score:** {input_data['lifestyle_score']} (higher is better)")
 
-# Ask user for input
-user_input = st.text_area(
-    "Describe your lifestyle, health goals, or any specific concerns:",
-    placeholder="Example: I exercise twice a week, sleep 6 hours, eat out often, and want to lose weight..."
-)
+# Combine all input details into a readable summary
+summary_prompt = f"""
+You are an AI health coach. Summarize the user's lifestyle profile based on the following data:
 
-if st.button("Generate My Personalized Plan"):
-    if user_input.strip() == "":
-        st.warning("Please describe your lifestyle or goals first.")
-    else:
-        with st.spinner("Generating personalized plan..."):
-            try:
-                # Call OpenAI API
-                response = openai.ChatCompletion.create(
-                    model="gpt-4o-mini",
-                    messages=[
-                        {"role": "system", "content": "You are a certified health coach and nutrition advisor."},
-                        {"role": "user", "content": f"Create a personalized health improvement plan for: {user_input}. Include fitness, nutrition, sleep, and stress advice."}
-                    ],
-                    max_tokens=500,
-                    temperature=0.7
-                )
+Age: {age}
+Weight: {weight} kg
+Height: {height} cm
+Exercise level: {exercise}
+Sleep hours: {sleep}
+Sugar intake: {sugar_intake}
+Smoking: {smoking}
+Alcohol: {alcohol}
+Married: {married}
+Profession: {profession}
+BMI: {input_data['bmi']:.2f} ({input_data['bmi_category']})
+Lifestyle score: {input_data['lifestyle_score']}
+"""
 
-                ai_reply = response["choices"][0]["message"]["content"]
-                st.success("✅ Your Personalized Health Plan:")
-                st.write(ai_reply)
+if st.button("Generate Lifestyle Summary"):
+    with st.spinner("Analyzing your lifestyle..."):
+        import openai
+        openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-            except Exception as e:
-                st.error(f"Error: {e}")
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful AI health assistant."},
+                {"role": "user", "content": summary_prompt}
+            ],
+        )
+        ai_summary = response["choices"][0]["message"]["content"]
+        st.write(ai_summary)
+
+    st.info("Would you like a personalized improvement plan based on this summary?")
+
+if st.button("Yes, generate personalized improvement plan"):
+    plan_prompt = f"""
+Based on this user's lifestyle and BMI profile, generate a detailed personalized plan to improve their overall health and reduce health risks.
+Use a friendly, motivational tone.
+Here are the data points:
+
+Age: {age}
+BMI: {input_data['bmi']:.2f} ({input_data['bmi_category']})
+Exercise: {exercise}
+Sleep hours: {sleep}
+Sugar intake: {sugar_intake}
+Smoking: {smoking}
+Alcohol: {alcohol}
+Lifestyle score: {input_data['lifestyle_score']}
+"""
+
+    with st.spinner("Generating personalized plan..."):
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a professional health and lifestyle advisor."},
+                {"role": "user", "content": plan_prompt}
+            ],
+        )
+        ai_plan = response["choices"][0]["message"]["content"]
+        st.write(ai_plan)
+
+    st.info("Would you like to set a specific goal or receive an actionable plan next?")
 
 
+if st.button("Generate Actionable Plan"):
+    goal_prompt = f"""
+The user wants a specific and actionable lifestyle improvement plan.
+Generate a step-by-step weekly action plan including exercise, diet, sleep improvement, and stress management.
+Data context:
+Age: {age}
+BMI category: {input_data['bmi_category']}
+Exercise level: {exercise}
+Sleep hours: {sleep}
+Sugar intake: {sugar_intake}
+Smoking: {smoking}
+Alcohol: {alcohol}
+Profession: {profession}
+Lifestyle score: {input_data['lifestyle_score']}
+"""
+    with st.spinner("Creating your personalized action plan..."):
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a certified lifestyle and fitness AI coach."},
+                {"role": "user", "content": goal_prompt}
+            ],
+        )
+        action_plan = response["choices"][0]["message"]["content"]
+        st.success("Here’s your personalized action plan:")
+        st.write(action_plan)
 
 
 
