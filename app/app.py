@@ -1,3 +1,14 @@
+import os
+from dotenv import load_dotenv
+import openai
+
+# Load environment variables
+load_dotenv()
+
+# Set OpenAI API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+
 import streamlit as st
 import pandas as pd
 import joblib
@@ -133,6 +144,41 @@ if st.button("Predict"):
         f"<h3 style='color:{color};'>Predicted Risk: {risk_label}</h3>",
         unsafe_allow_html=True
     )
+
+
+import streamlit as st
+
+st.markdown("## 🧠 AI-Powered Personalized Health Plan")
+
+# Ask user for input
+user_input = st.text_area(
+    "Describe your lifestyle, health goals, or any specific concerns:",
+    placeholder="Example: I exercise twice a week, sleep 6 hours, eat out often, and want to lose weight..."
+)
+
+if st.button("Generate My Personalized Plan"):
+    if user_input.strip() == "":
+        st.warning("Please describe your lifestyle or goals first.")
+    else:
+        with st.spinner("Generating personalized plan..."):
+            try:
+                # Call OpenAI API
+                response = openai.ChatCompletion.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a certified health coach and nutrition advisor."},
+                        {"role": "user", "content": f"Create a personalized health improvement plan for: {user_input}. Include fitness, nutrition, sleep, and stress advice."}
+                    ],
+                    max_tokens=500,
+                    temperature=0.7
+                )
+
+                ai_reply = response["choices"][0]["message"]["content"]
+                st.success("✅ Your Personalized Health Plan:")
+                st.write(ai_reply)
+
+            except Exception as e:
+                st.error(f"Error: {e}")
 
 
 

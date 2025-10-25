@@ -1,0 +1,12 @@
+# Ignore environment secrets
+app/.env
+
+# Python caches
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+
+# Notebook checkpoints
+.ipynb_checkpoints/
