@@ -149,14 +149,14 @@ if st.button("Predict"):
 # --- Step 2: AI Summary Section ---
 st.subheader("Step 1: Lifestyle Summary")
 
-# ✅ Fix: Use .iloc[0] to access single values from the DataFrame
-bmi_value = input_data['bmi'].iloc[0]
-bmi_cat = input_data['bmi_category'].iloc[0]
-lifestyle_score = input_data['lifestyle_score'].iloc[0]
+# Extract single values from the dataframe safely
+bmi_value = float(input_data['bmi'].iloc[0])
+bmi_cat_value = input_data['bmi_category'].iloc[0]
+lifestyle_score_value = float(input_data['lifestyle_score'].iloc[0])
 
-# Display derived metrics safely
-st.write(f"**BMI:** {bmi_value:.2f} ({bmi_cat})")
-st.write(f"**Lifestyle Score:** {lifestyle_score} (higher is better)")
+# Display them properly
+st.write(f"**BMI:** {bmi_value:.2f} ({bmi_cat_value})")
+st.write(f"**Lifestyle Score:** {lifestyle_score_value:.2f} (higher is better)")
 
 # Combine all input details into a readable summary
 summary_prompt = f"""
