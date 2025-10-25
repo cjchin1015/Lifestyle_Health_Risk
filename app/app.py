@@ -150,8 +150,8 @@ if st.button("Predict"):
 st.subheader("Step 1: Lifestyle Summary")
 
 # Display key derived metrics
-st.write(f"**BMI:** {input_data['bmi']:.2f} ({input_data['bmi_category']})")
-st.write(f"**Lifestyle Score:** {input_data['lifestyle_score']} (higher is better)")
+st.write(f"**BMI:** {input_data['bmi'].iloc[0]:.2f} ({bmi_category(input_data['bmi'].iloc[0])})")
+st.write(f"**Lifestyle Score:** {input_data['lifestyle_score'].iloc[0]} (higher is better)")
 
 # Combine all input details into a readable summary
 summary_prompt = f"""
