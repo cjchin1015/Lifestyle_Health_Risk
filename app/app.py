@@ -4,7 +4,9 @@ import joblib
 from sklearn.preprocessing import LabelEncoder
 
 # 1️⃣ Load your trained model
-model = joblib.load('/content/drive/MyDrive/Lifestyle_Health_Risk/models/optimized_random_forest.pkl')
+import joblib
+model = joblib.load('optimized_random_forest.pkl')
+
 
 # 2️⃣ Define LabelEncoders for categorical features (must match training)
 exercise_encoder = LabelEncoder()
